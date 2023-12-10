@@ -100,8 +100,6 @@ export function render(playerCar, trafficCars, camera) {
         }],
     };
 
-    initializeDevice(playerCar.model, trafficCars.map(car => car.model));
-
     const commandEncoder = device.createCommandEncoder();
     const renderPass = commandEncoder.beginRenderPass(renderPassDescriptor);
     renderPass.setPipeline(pipeline);
@@ -126,6 +124,7 @@ export function render(playerCar, trafficCars, camera) {
     renderPass.draw(playerCarModel.length / 5);
 
     renderPass.setVertexBuffer(0, trafficCarBuffer);
+    
     for (const trafficCar of trafficCars) {
         modelMatrix = getModelMatrix(trafficCar);
         let trafficCarMvpMatrix = mat4.create();
@@ -140,7 +139,7 @@ export function render(playerCar, trafficCars, camera) {
             entries: [{ binding: 0, resource: { buffer: uniformBuffer } }],
         }));
 
-        renderPass.draw(trafficCarModel.length / 5);
+        renderPass.draw(trafficCar.model.length / 5);
     }
 
     renderPass.endPass();

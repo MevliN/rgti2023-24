@@ -8,6 +8,7 @@ class TrafficCar {
         this.scale = { x: 1, y: 1, z: 1 };
         this.speed = 1;
         this.model = null;
+        this.loadAndSetModel('models/playerCar/bugatti.obj');
     }
 
     async initialize() {

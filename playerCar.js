@@ -9,7 +9,7 @@ class PlayerCar {
         this.scale = { x: 1, y: 1, z: 1 };
         this.lane = 1;
         this.model = null;
-        this.loadModel('models/playerCar/bugatti.obj');
+        this.loadAndSetModel('models/playerCar/bugatti.obj');
     }
 
     async initialize() {
