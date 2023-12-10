@@ -1,10 +1,9 @@
-import { mat4 } from 'gl-matrix';
+import { mat4 } from './gl-matrix,js';
 import { vertexShaderCode, fragmentShaderCode } from './shaders.js';
 import { getViewMatrix, getProjectionMatrix, getModelMatrix } from './matrix.js';
 
-let device, pipeline, uniformBuffer, playerCarBuffer, trafficCarBuffer, playerCarModel, trafficCarModel;
+let device, pipeline, uniformBuffer, playerCarBuffer, trafficCarBuffer;
 
-// Initialize your WebGPU device, pipeline, buffers, and models here...
 async function initializePipeline() {
     const vertexShaderModule = device.createShaderModule({ code: vertexShaderCode });
     const fragmentShaderModule = device.createShaderModule({ code: fragmentShaderCode });
@@ -44,27 +43,18 @@ async function initializePipeline() {
     });
 }
 
-async function initializePlayerCarBuffer(playerCarData) {
-    playerCarBuffer = device.createBuffer({
-        size: playerCarData.byteLength,
+async function initializeCarBuffer(carData) {
+    const carBuffer = device.createBuffer({
+        size: carData.byteLength,
         usage: GPUBufferUsage.VERTEX,
         mappedAtCreation: true,
     });
-    new Float32Array(playerCarBuffer.getMappedRange()).set(playerCarData);
-    playerCarBuffer.unmap();
+    new Float32Array(carBuffer.getMappedRange()).set(carData);
+    carBuffer.unmap();
+    return carBuffer;
 }
 
-async function initializeTrafficCarBuffer(trafficCarData) {
-    trafficCarBuffer = device.createBuffer({
-        size: trafficCarData.byteLength,
-        usage: GPUBufferUsage.VERTEX,
-        mappedAtCreation: true,
-    });
-    new Float32Array(trafficCarBuffer.getMappedRange()).set(trafficCarData);
-    trafficCarBuffer.unmap();
-}
-
-async function initializeDevice(playerCarModel, trafficCarModels) {
+export async function initializeDevice(playerCarModel, trafficCarModels) {
     if (!navigator.gpu) {
         console.log('WebGPU is not supported');
         return;
@@ -88,8 +78,8 @@ async function initializeDevice(playerCarModel, trafficCarModels) {
     });
 
     await initializePipeline();
-    await initializePlayerCarBuffer(playerCarModel);
-    await initializeTrafficCarBuffer(trafficCarModels);
+    await initializeCarBuffer(playerCarModel);
+    await initializeCarBuffer(trafficCarModels);
 }
 
 export function render(playerCar, trafficCars, camera) {
@@ -121,7 +111,7 @@ export function render(playerCar, trafficCars, camera) {
         entries: [{ binding: 0, resource: { buffer: uniformBuffer } }],
     }));
 
-    renderPass.draw(playerCarModel.length / 5);
+    renderPass.draw(playerCarModel.length / 3);
 
     renderPass.setVertexBuffer(0, trafficCarBuffer);
     
@@ -139,7 +129,7 @@ export function render(playerCar, trafficCars, camera) {
             entries: [{ binding: 0, resource: { buffer: uniformBuffer } }],
         }));
 
-        renderPass.draw(trafficCar.model.length / 5);
+        renderPass.draw(trafficCar.model.length / 3);
     }
 
     renderPass.endPass();

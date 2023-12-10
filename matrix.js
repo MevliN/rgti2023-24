@@ -1,4 +1,4 @@
-import { mat4, vec3 } from 'gl-matrix';
+import { mat4, vec3 } from './gl-matrix.js';
 
 export function getModelMatrix(model) {
     const matrix = mat4.create();

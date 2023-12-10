@@ -22,6 +22,7 @@ class TrafficCar {
 
     update() {
         this.position.x = this.lane * 2 - 2;
+        this.position.z -= this.speed;
     }
 }
 
