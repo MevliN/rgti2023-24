@@ -12,7 +12,7 @@ struct VertexOutput {
 @vertex
 fn vertex_main(input: VertexInput) -> VertexOutput {
     var output: VertexOutput;
-    output.position = input.position; // TODO: Apply model-view-projection matrix
+    output.position = input.position;
     output.uv = input.uv;
     return output;
 }
@@ -21,6 +21,6 @@ fn vertex_main(input: VertexInput) -> VertexOutput {
 export const fragmentShaderCode = `
 @fragment
 fn fragment_main() -> @location(0) vec4<f32> {
-    return vec4<f32>(1.0, 0.0, 0.0, 1.0); // Red color
+    return vec4<f32>(1.0, 0.0, 0.0, 1.0);
 }
 `;

@@ -185,7 +185,7 @@ export function render(playerCar, trafficCars, camera) {
     
     for (const trafficCar of trafficCars) {
 
-        trafficCar.position = [camera.position[0], camera.position[1], camera.position[2] - 10];  // 10 units in front of the camera
+        trafficCar.position = [camera.position[0], camera.position[1], camera.position[2] - 10];
 
         modelMatrix = getModelMatrix(trafficCar);
         let trafficCarMvpMatrix = mat4.create();
