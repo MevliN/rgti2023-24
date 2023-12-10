@@ -1,4 +1,7 @@
-import { mat4, vec3 } from './gl-matrix.js';
+import * as glMatrix from "./esm/index.js"
+
+let mat4 = glMatrix.mat4;
+let vec3 = glMatrix.vec3;
 
 export function getModelMatrix(model) {
     const matrix = mat4.create();

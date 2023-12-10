@@ -1,11 +1,13 @@
 import PlayerCar from './playerCar.js';
 import TrafficCar from './trafficCar.js';
+import Camera from './camera.js';
 import { getInput } from './input.js';
 import { render, initializeDevice } from './renderer.js';
 import { handleCollision } from './collision.js';
 import { updateScore } from './score.js';
 
 export let playerCar = new PlayerCar();
+export let camera = new Camera();
 
 let trafficCars = [];
 
@@ -35,7 +37,7 @@ function updateGame() {
 
     updateScore();
 
-    render(playerCar, trafficCars);
+    render(playerCar, trafficCars, camera);
 
     requestAnimationFrame(updateGame);
 }
@@ -48,4 +50,6 @@ async function setupGame() {
     updateGame();
 }
 
-await setupGame();
+document.addEventListener('DOMContentLoaded', async () => {
+    await setupGame();
+});

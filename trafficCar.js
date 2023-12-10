@@ -8,11 +8,11 @@ class TrafficCar {
         this.scale = { x: 1, y: 1, z: 1 };
         this.speed = 1;
         this.model = null;
-        this.loadAndSetModel('models/playerCar/bugatti.obj');
+        this.loadAndSetModel('models/trafficCar/1.obj');
     }
 
     async initialize() {
-        await this.loadAndSetModel('models/trafficCar/trafficCar.obj');
+        await this.loadAndSetModel('models/trafficCar/1.obj');
     }
 
     async loadAndSetModel(url) {
