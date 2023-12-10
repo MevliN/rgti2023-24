@@ -1,30 +1,27 @@
-import { getInput } from './input.js';
+import { loadModel } from './modelLoader.js';
 
-let trafficCar = {
-    position: { x: 0, y: 0, z: 2 },
-    speed: 1,
-    lane: 1,
-};
-
-const lanes = [-1, 0, 1];
-
-export function createTrafficCar() {
-    // Here you would load the car's model and initialize any other properties
-    return trafficCar;
-}
-
-export function updateTrafficCars(trafficCars, deltaTime) {
-    const input = getInput();
-
-    if (input.a && trafficCar.lane > 0) {
-        trafficCar.lane--;
+class TrafficCar {
+    constructor() {
+        this.lane = Math.floor(Math.random() * 3);
+        this.position = { x: this.lane * 2 - 2, y: 0, z: 0 };
+        this.rotation = { x: 0, y: 0, z: 0 };
+        this.scale = { x: 1, y: 1, z: 1 };
+        this.speed = 1;
+        this.model = null;
     }
 
-    if (input.d && trafficCar.lane < 2) {
-        trafficCar.lane++;
+    async initialize() {
+        await this.loadAndSetModel('models/trafficCar/trafficCar.obj');
     }
 
-    trafficCar.position.x = lanes[trafficCar.lane];
+    async loadAndSetModel(url) {
+        const model = await loadModel(url);
+        this.model = model.vertices;
+    }
 
-    trafficCar.position.z += trafficCar.speed * deltaTime;
+    update() {
+        this.position.x = this.lane * 2 - 2;
+    }
 }
+
+export default TrafficCar;

@@ -14,5 +14,3 @@ score.js: This file handles the game score. It keeps track of how long the playe
 renderer.js: This file handles rendering the game scene. It uses the WebGPU API to draw the player car and traffic cars.
 
 sound.js: This file handles sound effects. It plays sound effects when the player dodges a car or when a collision occurs.
-
-modelLoader.js: This file handles loading 3D models. It uses the fetchObjFile function to load models from OBJ files.

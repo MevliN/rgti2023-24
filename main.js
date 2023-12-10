@@ -1,43 +1,51 @@
-import { setupInput } from './input.js';
-import { createPlayerCar, updatePlayerCar } from './playerCar.js';
-import { createTrafficCar, updateTrafficCars } from './trafficCar.js';
-import { checkCollisions } from './collision.js';
-import { updateScore, getScore } from './score.js';
-import { render } from './renderer.js';
+import PlayerCar from './playerCar.js';
+import TrafficCar from './trafficCar.js';
+import { getInput } from './input.js';
+import { render, initializeDevice } from './renderer.js';
+import { handleCollision } from './collision.js';
+import { updateScore } from './score.js';
 
-let playerCar;
+export let playerCar = new PlayerCar();
+
 let trafficCars = [];
-let lastUpdateTime = Date.now();
 
-function setupGame() {
-    setupInput();
-    playerCar = createPlayerCar();
-    trafficCars.push(createTrafficCar());
+function addTrafficCar() {
+    let trafficCar = new TrafficCar();
+    trafficCars.push(trafficCar);
+
+    let nextInterval = Math.random() * 3000 + 1000;
+    setTimeout(addTrafficCar, nextInterval);
 }
 
 function updateGame() {
-    const currentTime = Date.now();
-    const deltaTime = (currentTime - lastUpdateTime) / 1000;
-    lastUpdateTime = currentTime;
+    let keys = getInput();
 
-    updatePlayerCar(playerCar, deltaTime);
-    updateTrafficCars(trafficCars, deltaTime);
-    updateScore(deltaTime);
+    playerCar.update(keys);
 
-    if (checkCollisions(playerCar, trafficCars)) {
-        endGame();
+    for (let trafficCar of trafficCars) {
+        trafficCar.update();
     }
-}
 
-function endGame() {
-    console.log('Game over! Your score is: ' + getScore());
-}
+    handleCollision(playerCar, trafficCars);
 
-function gameLoop() {
-    updateGame();
+    trafficCars = trafficCars.filter(trafficCar => {
+        trafficCar.update();
+        return trafficCar.z < camera.z;
+    });
+
+    updateScore();
+
     render(playerCar, trafficCars);
-    requestAnimationFrame(gameLoop);
+
+    requestAnimationFrame(updateGame);
 }
 
-setupGame();
-gameLoop();
+async function setupGame() {
+    await playerCar.initialize();
+    addTrafficCar();
+    await trafficCars[0].initialize();
+    await initializeDevice(playerCar.model, trafficCars.map(car => car.model));
+    updateGame();
+}
+
+await setupGame();

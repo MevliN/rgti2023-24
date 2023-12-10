@@ -1,38 +1,47 @@
 import { getInput } from './input.js';
+import { loadModel } from './modelLoader.js';
 
-let playerCar = {
-    position: { x: 0, y: 0, z: 0 },
-    speed: 1,
-    lane: 1,
-    targetPosition: 0,
-    laneChangeSpeed: 2,
-};
+class PlayerCar {
 
-const lanes = [-1, 0, 1];
-function lerp(start, end, t) {
-    return start * (1 - t) + end * t;
-}
-
-export function createPlayerCar() {
-    // Here you would load the car's model and initialize any other properties
-    playerCar.targetPosition = lanes[playerCar.lane];
-    return playerCar;
-}
-
-export function updatePlayerCar(deltaTime) {
-    const input = getInput();
-
-    if (input.a && playerCar.lane > 0) {
-        playerCar.lane--;
-        playerCar.targetPosition = lanes[playerCar.lane];
+    constructor() {
+        this.position = { x: 0, y: 0, z: 0 };
+        this.rotation = { x: 0, y: 0, z: 0 };
+        this.scale = { x: 1, y: 1, z: 1 };
+        this.lane = 1;
+        this.model = null;
+        this.loadModel('models/playerCar/bugatti.obj');
     }
 
-    if (input.d && playerCar.lane < 2) {
-        playerCar.lane++;
-        playerCar.targetPosition = lanes[playerCar.lane];
+    async initialize() {
+        await this.loadAndSetModel('models/playerCar/bugatti.obj');
     }
 
-    playerCar.position.x = lerp(playerCar.position.x, playerCar.targetPosition, playerCar.laneChangeSpeed * deltaTime);
+    async loadAndSetModel(url) {
+        const model = await loadModel(url);
+        this.model = model.vertices;
+    }
 
-    playerCar.position.z += playerCar.speed * deltaTime;
+    changeLane(direction) {
+        if (direction === 'left' && this.lane > 0) {
+            this.lane--;
+        } else if (direction === 'right' && this.lane < 2) {
+            this.lane++;
+        }
+
+        this.position.x = this.lane * 2 - 2;
+    }
+
+    update() {
+        const input = getInput();
+
+        if (input.a) {
+            this.changeLane('left');
+        }
+
+        if (input.d) {
+            this.changeLane('right');
+        }
+    }
 }
+
+export default PlayerCar;
