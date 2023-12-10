@@ -77,15 +77,33 @@ async function setupWebGPU() {
         }],
     });
 
-
+    try {
 
     pipelineLayout = device.createPipelineLayout({ bindGroupLayouts: [bindGroupLayout] });
 
-    const vertexShaderCode = await fetchShader('vertexShader.wgsl');
-    const fragmentShaderCode = await fetchShader('fragmentShader.wgsl');
+    const vertexShaderCode = /*wgsl*/`[[stage(vertex)]]
+    fn main([[builtin(vertex_index)]] VertexIndex : u32) -> [[builtin(position)]] vec4<f32> {
+        var pos : array<vec2<f32>, 3> = array<vec2<f32>, 3>(
+            vec2<f32>(0.0, 0.5),
+            vec2<f32>(-0.5, -0.5),
+            vec2<f32>(0.5, -0.5));
+        return vec4<f32>(pos[VertexIndex], 0.0, 1.0);
+    }`;
 
-    const vertexShaderModule = device.createShaderModule({ code: vertexShaderCode });
-    const fragmentShaderModule = device.createShaderModule({ code: fragmentShaderCode });
+    const fragmentShaderCode = /*wgsl*/`[[stage(fragment)]]
+    fn main() -> [[builtin(frag_color)]] vec4<f32> {
+        return vec4<f32>(1.0, 0.0, 0.0, 1.0);
+    }`;
+
+    let vertexShaderModule, fragmentShaderModule;
+
+    try {
+        vertexShaderModule = device.createShaderModule({ code: vertexShaderCode });
+        fragmentShaderModule = device.createShaderModule({ code: fragmentShaderCode });
+        console.log('WGSL is supported!');
+    } catch (e) {
+        console.log('Failed to create shader module:', error);
+    }
 
     renderPipeline = device.createRenderPipeline({
         layout: pipelineLayout,
@@ -104,6 +122,9 @@ async function setupWebGPU() {
           topology: 'triangle-list',
         },
     });
+} catch (e) {
+    console.error(e.stack);
+}
 
     render();
 }
